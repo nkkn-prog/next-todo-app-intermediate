@@ -1,0 +1,39 @@
+.container {
+  background-color: #0D3668;
+  height: 60px;
+  display: flex;
+  justify-content: space-between;
+  
+}
+
+.logo {
+  color: aliceblue;
+  font-weight: bold;
+  font-size: 30px;
+  align-self: center;
+  margin-left: 20px;
+}
+
+.nav {
+  align-items: center;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  color: aliceblue;
+  font-weight: 500;
+
+}
+.nav:last-child {
+  margin-right: 20px;
+}
+
+.nav>a {
+  display: inline-block;
+  border-radius: 3px;
+  vertical-align: middle;
+}
+
+.nav>a:hover{
+  background-color: aliceblue;
+  color:#0D3668;
+}
