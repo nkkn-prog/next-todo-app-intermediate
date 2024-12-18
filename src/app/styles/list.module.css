@@ -1,0 +1,16 @@
+.contaniner {
+  min-height: 100vh;
+}
+
+.title {
+  padding: 5rem 0;
+  text-align: center;
+}
+
+.main {
+  display: grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap: 20px;
+  padding: 1rem;
+  height: auto;
+}
