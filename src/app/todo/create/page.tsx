@@ -1,9 +1,18 @@
+'use client'
 import React from 'react'
+import InputForm from '@/app/components/InputForm'
+import { Title } from '@/app/components/Title'
 
-const page = () => {
+const Create = () => {
+
   return (
-    <div>Create Page</div>
+    <>
+      <div style={{minHeight: '100vh'}}>
+        <Title category='create'/>
+        <InputForm category='create'/>
+      </div>
+    </>
   )
 }
 
-export default page
+export default Create
