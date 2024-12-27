@@ -1,16 +1,16 @@
 'use client'
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import styles from '../styles/inputForm.module.css'
 import { useForm } from "react-hook-form"
 import BackToListBtn from '@/app/components/BackToListBtn'
+import { todoApi } from '../lib/api'
 
 type FormValues = {
+  id: number;
   title: string;
   content: string;
+  status: string;
 }
-
-const btnTextCreate = '作成'
-const btnTextSave = '保存'
 
 const btnTexts = {
   create: '作成',
@@ -18,11 +18,37 @@ const btnTexts = {
 }
 
 const InputForm = (props) => {
+
   const { register, handleSubmit, formState: { errors }} = useForm<FormValues>();
+  const { category, targetTodo } = props;
 
-  const onSubmit = ((data: FormValues) => console.log(data))
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
+  const [editId, setEditId] = useState('');
 
-  const { category } = props;
+  useEffect(() => {
+    if (category === 'edit' && targetTodo !== null) {
+      setTitle(targetTodo.todos.title);
+      setContent(targetTodo.todos.content);
+      setEditId(targetTodo.todos.id)
+    }
+  }, [category, targetTodo]);
+
+
+  const onSubmit = ((data: FormValues) => {
+    if(category === 'create'){
+      try {
+        todoApi.create(data)
+        setTitle('');
+        setContent('')
+
+      } catch (error) {
+        console.error('Error:', error)
+      }
+    } else if (category === 'edit'){
+      todoApi.update(parseInt(editId), data)
+    }
+  })
 
   return (
     <>
@@ -32,13 +58,15 @@ const InputForm = (props) => {
           <input
             className={styles.input}
             {...register('title', {
-            required: true,
-            maxLength: {
-              value: 40,
-              message: "40文字以下で入力してください",
-            },
-            })
-          }/>
+              required: true,
+              maxLength: {
+                value: 40,
+                message: "40文字以下で入力してください",
+              }
+            })}
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
           {errors.title?.type === 'maxLength' && <p>{errors.title.message}</p>}
           <label>内容</label>
           <textarea
@@ -46,6 +74,8 @@ const InputForm = (props) => {
             {...register("content", {
               required: false,
             })}
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
           />
           <div className={styles.btn}>
             {/* どこから来たかをpropsに入れておく */}
