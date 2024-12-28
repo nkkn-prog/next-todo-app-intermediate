@@ -10,13 +10,10 @@ type FormValues = {
 
 const defaultStatus = 'notStarted'
 
-export async function GET() {
-  console.log('fetch後に到達する箇所')
+export const GET = async() => {
   try {
     // idが存在しない場合、全てのタスクを取得
     const todos = await prisma.todo.findMany();
-    console.log('B2')
-
     console.log('全タスク取得完了:', todos);
     // 成功レスポンスを返す
     return NextResponse.json(
@@ -29,17 +26,17 @@ export async function GET() {
     )
 
   } catch (error) {
-    console.error('Error creating todo:', error)
+    console.log(error)
     // エラーレスポンスを返す
     return NextResponse.json(
-      { error: 'Failed to create todo' }, 
+      {  error: 'Failed to create todo' }, 
       { status: 500 }
     )
   }
 }
 
 // POSTメソッドとしてエクスポート
-export async function POST(request: Request) {
+export const POST = async(request: Request) => {
   try {
     // リクエストボディからデータを取得
     const data: FormValues = await request.json()

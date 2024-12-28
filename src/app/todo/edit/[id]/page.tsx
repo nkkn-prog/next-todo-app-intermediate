@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react'
 import { useParams} from 'next/navigation';
 import InputForm from '@/app/components/InputForm'
 import { Title } from '@/app/components/Title'
-import { todoApi } from '@/app/lib/api';
 
 const Edit = () => {
   const { id } = useParams();
@@ -11,10 +10,17 @@ const Edit = () => {
   const editId = Array.isArray(id) ? parseInt(id[0]) : id ? parseInt(id) : null;
 
   useEffect(() => {
+    console.log('useEffectの中')
     const fetchTodo = async () => {
       if (editId !== null) {
-        const todo = await todoApi.getEditTodo(editId);
-        setTargetTodo(todo);
+        const response = await fetch(`/api/todo/${id}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        const { todos }= await response.json();
+        setTargetTodo(todos);
       }
     };
     fetchTodo();

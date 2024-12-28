@@ -3,7 +3,7 @@ import React, {useState, useEffect} from 'react'
 import styles from '../styles/inputForm.module.css'
 import { useForm } from "react-hook-form"
 import BackToListBtn from '@/app/components/BackToListBtn'
-import { todoApi } from '../lib/api'
+import { useRouter } from 'next/navigation'
 
 type FormValues = {
   id: number;
@@ -21,6 +21,7 @@ const InputForm = (props) => {
 
   const { register, handleSubmit, formState: { errors }} = useForm<FormValues>();
   const { category, targetTodo } = props;
+  const router = useRouter();
 
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -28,26 +29,65 @@ const InputForm = (props) => {
 
   useEffect(() => {
     if (category === 'edit' && targetTodo !== null) {
-      setTitle(targetTodo.todos.title);
-      setContent(targetTodo.todos.content);
-      setEditId(targetTodo.todos.id)
+      setTitle(targetTodo.title);
+      setContent(targetTodo.content);
+      setEditId(targetTodo.id)
     }
   }, [category, targetTodo]);
 
+  const createTodos = async(data:FormValues) => {
+    try {
+      const response = await fetch('/api/todo', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: data.title,
+          content: data.content,
+        })
+      })
+      return await response.json()
+    } catch (error) {
+      console.error('Error:', error)
+      throw error
+    }
+  }
+
+  const updateTodo = async(id:number, data:FormValues) => {
+    try {
+      const response = await fetch(`/api/todo/${id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: id,
+          title: data.title,
+          content: data.content,
+          status: data.status,
+        })
+      })
+      return await response.json()
+    } catch (error) {
+      console.error('Error:', error)
+      throw error
+    }
+  }
 
   const onSubmit = ((data: FormValues) => {
     if(category === 'create'){
       try {
-        todoApi.create(data)
+        createTodos(data)
         setTitle('');
         setContent('')
-
       } catch (error) {
         console.error('Error:', error)
       }
     } else if (category === 'edit'){
-      todoApi.update(parseInt(editId), data)
+      updateTodo(parseInt(editId), data)
     }
+    router.push('/todo');
   })
 
   return (

@@ -1,5 +1,5 @@
 import { useRouter } from 'next/navigation'
-import React from 'react'
+import { deleteTodo } from '../api'
 
 type todoValue = {
   id: number,
@@ -36,7 +36,11 @@ const Cards = (props:TodoProps) => {
     width: '75%',
     padding: '0.5rem',
     whiteSpace: 'nowrap'
+  }
 
+  const handleDelete = async (id:number) => {
+    deleteTodo(id);
+    router.push('/todo')
   }
 
   return (
@@ -71,7 +75,7 @@ const Cards = (props:TodoProps) => {
           <div style={titleStyle}>{todo.title}</div>
           <div style={{width: '20%', display: 'flex'}}>
             <button style={{marginRight:'0.5rem'}} onClick={() => router.push(`/todo/edit/${todo.id}`)}>編集</button>
-            <button>削除</button>
+            <button onClick={() => handleDelete(todo.id)}>削除</button>
           </div>
         </div>
       ))}

@@ -1,7 +1,6 @@
 'use client'
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import styles from '../styles/list.module.css'
-import { todoApi } from '../lib/api'
 import Cards from '../components/Cards'
 import { useRouter } from 'next/navigation'
 
@@ -20,27 +19,48 @@ const statusMap = {
   completed: 'completed'
 }
 
-const { todos } = await todoApi.getAllTodos();
-
-const todosNotStarted: todoValue[] = [];
-const todosInProgress: todoValue[] = [];
-const todosCompleted: todoValue[] = [];
-
-todos.forEach((todo: todoValue) => {
-  switch (todo.status) {
-    case statusMap.notStarted:
-      todosNotStarted.push(todo);
-      break;
-    case statusMap.inProgress:
-      todosInProgress.push(todo);
-      break;
-    case statusMap.completed:
-      todosCompleted.push(todo);
-      break;
-  }
-});
-
 const TodoList = () => {
+
+  const [todosNotStarted, setTodosNotStarted] = useState<todoValue[]>([]);
+  const [todosInProgress, setTodosInProgress] = useState<todoValue[]>([]);
+  const [todosCompleted, setTodosCompleted] = useState<todoValue[]>([]);
+
+  useEffect(() => {
+    const fetchTodos = async () => {
+      try {
+        const response = await fetch('/api/todo');
+        const data = await response.json();
+
+        if (data.todos) {
+          const notStarted: todoValue[] = [];
+          const inProgress: todoValue[] = [];
+          const completed: todoValue[] = [];
+
+          data.todos.forEach((todo: todoValue) => {
+            switch (todo.status) {
+              case statusMap.notStarted:
+                notStarted.push(todo);
+                break;
+              case statusMap.inProgress:
+                inProgress.push(todo);
+                break;
+              case statusMap.completed:
+                completed.push(todo);
+                break;
+            }
+          });
+
+          setTodosNotStarted(notStarted);
+          setTodosInProgress(inProgress);
+          setTodosCompleted(completed);
+        }
+
+      } catch (error) {
+        console.error('Failed to fetch todos:', error);
+      }
+    }
+    fetchTodos()
+  }, []);
 
   const router = useRouter();
 
