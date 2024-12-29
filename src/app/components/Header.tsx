@@ -1,19 +1,22 @@
 import React from 'react'
 import styles from '../styles/header.module.css'
 import Link from 'next/link'
+import { auth } from '@/app/auth'
+import { SignOut } from './AuthComponents'
 
 // ここから定数
 const topPagePath = '/'
 const loginPagePath = '/login'
-const logoutPagePath = '/'
-const signupPagePath = '/signup'
+const signupPagePath = '/signin'
 
 const logoText = 'Todo App'
 const loginText = 'ログイン'
-const logoutText = 'ログアウト'
-const signupText = 'サインアップ'
+const signinText = 'サインイン'
 
-const Header = () => {
+const Header = async() => {
+
+  const session = await auth();
+
   return (
     <div className={styles.container}>
       <div className={styles.logo}>
@@ -23,18 +26,18 @@ const Header = () => {
         </Link>
       </div>
       <div className={styles.nav}>
-        {/* ログインしていたら、ログインボタンは出さない */}
-        <Link href={loginPagePath}>
-          {loginText}
-        </Link>
-        {/* ログインしていたら、ログアウトボタンを出す */}
-        <Link href={logoutPagePath}>
-          {logoutText}
-        </Link>
-        {/* ログインしていたら、サインアップボタンを出さない */}
-        <Link href={signupPagePath}>
-          {signupText}
-        </Link>
+        {session ? (
+          <SignOut />
+        ) : (
+          <>
+            <Link href={loginPagePath}>
+              {loginText}
+            </Link>
+            <Link href={signupPagePath}>
+              {signinText}
+            </Link>
+          </>
+        )}
       </div>
     </div>
   )
