@@ -2,6 +2,7 @@
 import Image from "next/image";
 import styles from "./page.module.css";
 import { useRouter } from "next/navigation";
+import { auth } from "./auth";
 
 // ここから定数
 const topPageTitle = 'Todoを作りましょう'
